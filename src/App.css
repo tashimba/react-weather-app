@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Unbounded&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Unbounded", cursive;
+}
+
+/* .App{
+    background: url(icons/bg.jpg) no-repeat center center/cover;
+} */
+.App-main{
+    width: 100%;
+    min-height: 100vh;
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+}
+.h1-location{
+    margin:30px 0 10px 0;
+}
+.cloud{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.box-container{
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(3,1fr);
+    
+}
+.box{
+    padding: 1rem; 
+    width: 250px; 
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.75);
+    transition: transform 0.21s;
+    text-align: center;
+}
+.box:hover{
+    transform: scale(1.02);
+}
+input{
+    width: 100%;
+    padding: 1rem;
+}
+form input{
+    margin-top: 20px;
+    width: 350px;
+    transition: all .4s;
+}
+input:focus{
+    width: 395px;
+}
+@media only screen and (max-width: 800px) {
+    .box-container{
+        display: flex;
+        flex-direction: column;
+      }
+}
+
+
