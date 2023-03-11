@@ -1,25 +1,16 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import './App.css'
+import Loader from './UI/Loader';
 
 function App() {
-  const photoApiKey ="lhtVXNlEc6eAhfcnbwZm22xTKq61PkT9SI14-z4fIj0";
 
   const [inputValue, setInputValue] = useState('');
-  const [location, setLocation] = useState('Saint Petersburg');
+  const [location, setLocation] = useState('Moscow');
   const [data, setData] = useState('')
   const [loading, setLoading] = useState(true)
   const [errorM, setErrorM] = useState(true)
   const [img, setImg] = useState('')
-
-  useEffect(() => {
-    axios.get(`https://api.unsplash.com/search/photos?pages=1&query=${location}&client_id=bxez53pkV7MCZOs8HxZzmV1u3mHFdyrsWYmFCoIN32o&`)
-    .then(response => setImg(response.data.results[2].urls.full))
-  }, [location])
-  
-  console.log(img)
-  console.log(data)
-  console.log(location)
 
   useEffect(() => {
     axios
@@ -29,24 +20,49 @@ function App() {
       ? (errorM && setErrorM(false), setData(response.data)) 
       : console.log()
       )
-    .catch(() => setErrorM(true))
+    .catch(() => stopError())
+    
+    axios.get(`https://api.unsplash.com/search/photos?pages=1&query=${location}&client_id=bxez53pkV7MCZOs8HxZzmV1u3mHFdyrsWYmFCoIN32o&`)
+    .then(response => {setImg(response.data.results[2].urls.full);})
+    .catch(() => stopErrorImg())
     .finally(()=>setLoading(false))
   }, [location, errorM]);
 
+  const stopError = () =>{
+    setErrorM(true);
+    alert('we have a problem, page will be reload');
+    window.location.reload();
+    setLocation('moscow');
+  }
   const submitInput = (event) =>{
     if (errorM === false) {
       event.preventDefault()    
-      setLocation(inputValue.charAt().toUpperCase()+inputValue.slice(1))
+      setLocation(inputValue)
+      setLoading(true)
       setInputValue('')
-      console.log
-    }
-    else {
-      alert('error')
     }
   }
+
+  // на апи нет фоток родины, пришлось постараться
+  const backGround = () => {
+    const AppSuccess= {
+      background: `url(${img}) no-repeat center center/cover`
+    }
+    const searchUstyug = {
+      background: `url(https://sun9-53.userapi.com/impf/c622731/v622731001/45f5f/Jq9YSFgl7l8.jpg?size=1280x854&quality=96&sign=7fc19b1bc4b6506ac9e6c37997badf0e&type=album) no-repeat center center/cover`
+    }
+    if (data.name == 'Velikiy Ustyug') {
+      return searchUstyug
+    }
+    else {
+      return AppSuccess
+    }
+  }
+
   return (
-    <div className="App" style={{ background: `url(${img}) no-repeat center center/cover`}}>
-      {!loading && 
+    <div style={backGround()} >
+      {!loading && !errorM
+      ?
         <div className="App-main">
         <form 
           onSubmit={(event) => submitInput(event)}>
@@ -57,35 +73,28 @@ function App() {
             onChange={(e) => setInputValue(e.target.value)}
           />
         </form>
-        <h1 className="h1-location">{location}</h1>
+        <h1 className="h1-location">{data.name}</h1>
         <div className="cloud">
           <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt='img-cloud'/>         
-
-            <h1 className="cloud-text">{data.clouds.all}</h1>
-
+            {/* <h1 className="cloud-text">{data.clouds.all}</h1> */}
         </div>
         <div className="box-container">
           <div className="box">
             <p>Humidity</p>
-
             <h1>{data.main.humidity.toFixed()}</h1>
-
           </div>
           <div className="box">
             <p>Wind</p>
-
               <h1>{data.wind.speed.toFixed()} km/h</h1>
-
           </div>
           <div className="box">
             <p>Temperature</p>
-
             <h1>{data.main.temp.toFixed()} °C</h1>
           </div>
         </div>
       </div>
-      }
-     
+      : <Loader/>  
+    }
     </div>
   )
 }
